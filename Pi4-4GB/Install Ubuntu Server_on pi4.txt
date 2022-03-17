@@ -1,0 +1,64 @@
+burn image of ubuntu server 20.04 onto sd card
+boot rpi
+write network: {config: disabled} to /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+write the following to /etc/netplan/01-netcfg.yaml:
+network:
+  version: 2
+  renderer: networkd
+  wifis:
+    wlan0:
+      dhcp4: true
+      dhcp6: true
+      optional: true
+      access-points: 
+        "******":
+          password: "**********"
+then do:
+sudo netplan generate
+sudo netplan apply
+reboot
+wifi now works for me, and then you can do stuff like apt update and install a desktop and stuff
+
+//---------------------
+
+Enabling SSH
+$sudo apt update
+$sudo apt install openssh-server
+
+When prompted, enter your password and press enter to continue the installation
+Once the installation is complete, the ssh service will start automatically. You can verify that SSH is working by typing:
+$sudo systemctl status ssh
+
+
+Unattended Upgrades
+By default, Ubuntu is configured to install unattended upgrades. Thus, after the first boot you can get the error message regarding the cache log when trying to install apt packages. Just be patient and wait until Ubuntu upgrades.
+However, if you wish to disable unattended upgrades, edit the /etc/apt/apt.conf.d/20auto-upgrades file as sudo, and set these values:
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "0";
+APT::Periodic::AutocleanInterval "0";
+APT::Periodic::Unattended-Upgrade "0";
+//--------------------------
+sudo apt update
+sudo apt install python3-pip
+
+sudo pip3 install pytz
+# sudo pip3 install requests
+sudo pip3 install paho-mqtt 
+sudo apt-get install portaudio19-dev python3-pyaudio
+
+sudo pip3 install --upgrade google-cloud-texttospeech
+sudo pip3 install pvporcupine
+sudo pip3 install pvrecorder
+sudo pip3 install pvrhino
+sudo apt-get install mpg123
+sudo apt install alsa-utils
+ 
+sudo apt install python3-lgpio //this is for controlling gpis pins in ubuntu
+
+amixer -c 1 sset Mic Capture Volume 80%
+Turns up the microphone level to 80%
+
+alsamixer
+sudo alsactl store
+
+

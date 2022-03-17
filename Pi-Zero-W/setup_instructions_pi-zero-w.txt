@@ -1,0 +1,82 @@
+Install all packages on workshop pi zero Matt
+
+ 1. set all interfaces on
+ 2. set wifi file:
+
+In the boot drive create a new file called wpa_supplicant.conf
+----
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=BG
+
+network={
+     ssid="your_network_name"
+     psk="your_wifi_password"
+     key_mgmt=WPA-PSK
+}
+----
+
+ 3. set ssh on
+ 4: Installing Mosquitto MQTT Broker on Pi Zero W:
+
+sudo apt-get update
+sudo apt-get install mosquitto
+sudo apt-get install mosquitto-clients
+sudo systemctl enable mosquitto.service
+sudo nano /etc/mosquitto/mosquitto.conf
+
+sudo nano etc/mosquitto/conf.d/mosquitto.conf"
+
+This will make a new file, configuring the mosquitto MQTT broker to work with other devices:
+---
+# Config file for mosquitto
+#
+# See mosquitto.conf(5) for more information.
+
+user mosquitto
+allow_duplicate_messages false
+
+listener 1883
+allow_anonymous true
+---
+
+ 5. Installing dependences (MQTT Client, Sensor Libraries, camera):
+
+sudo apt-get install python3-pip
+sudo pip3 install paho-mqtt
+
+#sudo apt-get install rpi.gpio
+sudo pip3 install pytz
+sudo pip3 install bme680
+sudo pip3 install mh_z19
+sudo pip3 install picamera
+#sudo pip3 install glob
+#sudo pip3 install math
+#sudo pip3 install json
+
+ 6. The Python script taking care of the sensor data and camera and send/receive MQTT messages as a client, also running on this Pi Zero W device is called "table.py". We need to make sure that the file will start on boot. The best option is to use "Systemd" service. Setting up the service:
+- We create a new service called "aloha". This name was the first that popped into my mind, but you are free to use any name.
+ 
+
+cd /etc/systemd/system/
+Sudo nano aloha.service
+---
+[Unit]
+   Description=aloha
+   Wants=network-online.target
+   After=network-online.target
+[Service]
+   Type=idle
+   WorkingDirectory=/home/pi/workshop
+   ExecStart=/usr/bin/python3 table.py
+[Install]
+   WantedBy=multi-user.target
+---
+
+sudo chmod 644 /etc/systemd/system/aloha.service
+sudo systemctl daemon-reload
+sudo systemctl enable aloha.service
+sudo systemctl daemon-reload
+
+Thats it. You are all set. Reboot and enjoy.
+
