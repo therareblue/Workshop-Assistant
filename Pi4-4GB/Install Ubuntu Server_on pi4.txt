@@ -1,7 +1,16 @@
-burn image of ubuntu server 20.04 onto sd card
-boot rpi
+INSTRUCTIONS FOR PREPARING THE RASPBERRY PI 4 BOARD
+Note: You should install ubuntu, instead of raspbian, if you want to use Google Text To Speech (especially the wavenet high-quality voices).
+
+Note: This is a copy of my notes made while creating my demo. It will be clarified and updated in more detail soon.
+-------------------------------------------------
+
+1. Burn image of ubuntu server 20.04 onto sd card
+2. Boot rpi
+3. Setting up wifi (note the ubuntu is without desktop environment).
+
 write network: {config: disabled} to /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
 write the following to /etc/netplan/01-netcfg.yaml:
+
 network:
   version: 2
   renderer: networkd
@@ -19,9 +28,9 @@ sudo netplan apply
 reboot
 wifi now works for me, and then you can do stuff like apt update and install a desktop and stuff
 
-//---------------------
+---------------------
 
-Enabling SSH
+4. Enabling SSH
 $sudo apt update
 $sudo apt install openssh-server
 
@@ -30,14 +39,16 @@ Once the installation is complete, the ssh service will start automatically. You
 $sudo systemctl status ssh
 
 
-Unattended Upgrades
+5. Unattended Upgrades
 By default, Ubuntu is configured to install unattended upgrades. Thus, after the first boot you can get the error message regarding the cache log when trying to install apt packages. Just be patient and wait until Ubuntu upgrades.
 However, if you wish to disable unattended upgrades, edit the /etc/apt/apt.conf.d/20auto-upgrades file as sudo, and set these values:
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Download-Upgradeable-Packages "0";
 APT::Periodic::AutocleanInterval "0";
 APT::Periodic::Unattended-Upgrade "0";
-//--------------------------
+--------------------------
+6. All dependencies:
+
 sudo apt update
 sudo apt install python3-pip
 
@@ -54,6 +65,8 @@ sudo apt-get install mpg123
 sudo apt install alsa-utils
  
 sudo apt install python3-lgpio //this is for controlling gpis pins in ubuntu
+
+7. Comands to control volume over terminal:
 
 amixer -c 1 sset Mic Capture Volume 80%
 Turns up the microphone level to 80%
